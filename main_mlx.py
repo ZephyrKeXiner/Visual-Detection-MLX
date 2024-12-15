@@ -36,6 +36,7 @@ def loss_fn(model, X, y):
 
 
 def batch_iterate(batch_size, X, y):
+    X = np.expand_dims(X, axis=-1)
     perm = mx.array(np.random.permutation(y.size))
     for s in range(0, y.size, batch_size):
         ids = perm[s : s + batch_size]
@@ -53,11 +54,10 @@ def main(args):
 
     np.random.seed(seed)
 
-    # Load the data
     train_images, train_labels, test_images, test_labels = map(
         mx.array, getattr(mnist, args.dataset)()
     )
-    # Load the model
+
     model = AlexnetMLX(train_images.shape[-1], num_classes)
     mx.eval(model.parameters())
 
@@ -77,6 +77,8 @@ def main(args):
     for e in range(num_epochs):
         tic = time.perf_counter()
         for X, y in batch_iterate(batch_size, train_images, train_labels):
+            X = mx.array(X)
+            y = mx.array(y)
             step(X, y)
             mx.eval(model.state)
         accuracy = eval_fn(test_images, test_labels)

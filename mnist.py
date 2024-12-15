@@ -55,7 +55,7 @@ def mnist(
         mnist = pickle.load(f)
 
     def preproc(x):
-        return x.astype(np.float32) / 255.0
+        return x.astype(np.float32).reshape(-1,28,28) / 255.0
 
     mnist["training_images"] = preproc(mnist["training_images"])
     mnist["test_images"] = preproc(mnist["test_images"])
@@ -77,7 +77,21 @@ def fashion_mnist(save_dir="/tmp"):
 
 if __name__ == "__main__":
     train_x, train_y, test_x, test_y = mnist()
-    assert train_x.shape == (60000, 28 * 28), "Wrong training set size"
+    assert train_x.shape == (60000, 28, 28), "Wrong training set size"
     assert train_y.shape == (60000,), "Wrong training set size"
-    assert test_x.shape == (10000, 28 * 28), "Wrong test set size"
+    assert test_x.shape == (10000, 28, 28), "Wrong test set size"
     assert test_y.shape == (10000,), "Wrong test set size"
+
+    import matplotlib.pyplot as plt
+
+# 假设 mnist 函数已经定义并返回数据
+    train_images, train_labels, test_images, test_labels = mnist()
+
+# 可视化其中一张图片，例如第一张训练图片
+    def visualize_image(image):
+        plt.imshow(image, cmap='gray')
+        plt.axis('off')
+        plt.show()
+
+# 调用可视化函数
+    visualize_image(train_images[0]) 
